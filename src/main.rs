@@ -4,6 +4,7 @@ use std::io::prelude::*;
 
 use clap::Parser;
 use python_ast::{parse, PythonContext, CodeGen};
+use rust_format::{Formatter, RustFmt};
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
@@ -37,7 +38,13 @@ fn main() {
                 format!("{:?}", ast)
             }
         } else {
-            format!("{}", ast.to_rust(&mut ctx).unwrap())
+            let rust = ast.to_rust(&mut ctx).unwrap();
+            if args.pretty {
+                let unformated = rust.to_string();
+                RustFmt::default().format_str(unformated).unwrap()
+            } else {
+                format!("{}", rust)
+            }
         };
         output_list.push(output);
     }
