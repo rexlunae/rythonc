@@ -9,3 +9,4 @@ edition = "2021"
 clap = { version = "4.1.8", features = ["derive", "cargo"] }
 wild = "2"
 python-ast = { path = "../python-ast-rs", version = "0.1" }
+rust-format = "0.3"
