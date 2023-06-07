@@ -8,8 +8,8 @@ use python_ast::{parse, PythonContext, CodeGen};
 use rust_format::{Formatter, RustFmt};
 
 // Set up the fern logging facility.
-fn setup_logger(level: log::LevelFilter) -> Result<(), fern::InitError> {
-    fern::Dispatch::new()
+fn setup_logger(level: log::LevelFilter, log_file: Option<String>) -> Result<(), fern::InitError> {
+    let mut logger = fern::Dispatch::new()
         .format(|out, message, record| {
             out.finish(format_args!(
                 "[{} {} {}] {}",
@@ -20,9 +20,13 @@ fn setup_logger(level: log::LevelFilter) -> Result<(), fern::InitError> {
             ))
         })
         .level(level)
-        .chain(std::io::stdout())
-        .chain(fern::log_file("output.log")?)
-        .apply()?;
+        .chain(std::io::stdout());
+
+    match log_file {
+        None => {},
+        Some(s) => logger = logger.chain(fern::log_file(s)?),
+    };
+    logger.apply()?;
     Ok(())
 }
 
@@ -43,11 +47,14 @@ struct Args {
     #[clap(long, short, action, help="Sets the log level. Values are: off,error,warn,info,debug,trace", default_value_t=log::LevelFilter::Warn)]
     log_level: log::LevelFilter,
 
+    #[clap(long, action, help="Write log events to this file.")]
+    log_file: Option<String>,
+
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = Args::parse();
-    setup_logger(args.log_level)?;
+    setup_logger(args.log_level, args.log_file)?;
     let mut ctx = PythonContext::default();
 
     let mut output_list = Vec::new();
