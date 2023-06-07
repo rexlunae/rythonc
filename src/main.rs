@@ -1,6 +1,7 @@
 use std::path::{Path, PathBuf};
 use std::fs::{read_to_string, File};
 use std::io::prelude::*;
+use std::time::SystemTime;
 
 use clap::Parser;
 use python_ast::{parse, PythonContext, CodeGen};
@@ -11,8 +12,8 @@ fn setup_logger() -> Result<(), fern::InitError> {
     fern::Dispatch::new()
         .format(|out, message, record| {
             out.finish(format_args!(
-                "[{} {}] {}",
-                //humantime::format_rfc3339_seconds(SystemTime::now()),
+                "[{} {} {}] {}",
+                humantime::format_rfc3339_seconds(SystemTime::now()),
                 record.level(),
                 record.target(),
                 message
