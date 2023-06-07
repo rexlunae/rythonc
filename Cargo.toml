@@ -10,3 +10,5 @@ clap = { version = "4.1.8", features = ["derive", "cargo"] }
 wild = "2"
 python-ast = { path = "../python-ast-rs", version = "0.1" }
 rust-format = "0.3"
+fern = "0.6"
+log = "0.4"

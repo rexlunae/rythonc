@@ -6,6 +6,25 @@ use clap::Parser;
 use python_ast::{parse, PythonContext, CodeGen};
 use rust_format::{Formatter, RustFmt};
 
+// Set up the fern logging facility.
+fn setup_logger() -> Result<(), fern::InitError> {
+    fern::Dispatch::new()
+        .format(|out, message, record| {
+            out.finish(format_args!(
+                "[{} {}] {}",
+                //humantime::format_rfc3339_seconds(SystemTime::now()),
+                record.level(),
+                record.target(),
+                message
+            ))
+        })
+        .level(log::LevelFilter::Debug)
+        .chain(std::io::stdout())
+        .chain(fern::log_file("output.log")?)
+        .apply()?;
+    Ok(())
+}
+
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
 struct Args {
@@ -16,12 +35,13 @@ struct Args {
 
     #[clap(long, short, action, help="Nicely format the output.")]
     pretty: bool,
-    
+
     #[clap(long, short, action, help="Don't actually compile, just output the ast.")]
     ast_only: bool,
 }
 
-fn main() {
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    setup_logger()?;
     let args = Args::parse();
     let mut ctx = PythonContext::default();
 
@@ -60,4 +80,5 @@ fn main() {
 
     }
 
+    Ok(())
 }
