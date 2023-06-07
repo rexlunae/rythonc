@@ -49,8 +49,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut output_list = Vec::new();
 
     for input in args.inputs {
-        let py = read_to_string(input).unwrap();
-        let ast = parse(&py, "__main__").unwrap();
+        let py = read_to_string(input)?;
+        let ast = parse(&py, "__main__")?;
 
         let output = if args.ast_only {
             if args.pretty {
@@ -59,10 +59,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 format!("{:?}", ast)
             }
         } else {
-            let rust = ast.to_rust(&mut ctx).unwrap();
+            let rust = ast.to_rust(&mut ctx)?;
             if args.pretty {
                 let unformated = rust.to_string();
-                RustFmt::default().format_str(unformated).unwrap()
+                RustFmt::default().format_str(unformated)?
             } else {
                 format!("{}", rust)
             }
@@ -74,8 +74,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     match args.output {
         Some(f) => {
-            let mut file = File::create(f).unwrap();
-            file.write_all(file_output.as_bytes()).unwrap();
+            let mut file = File::create(f)?;
+            file.write_all(file_output.as_bytes())?;
         }
         None => println!("{}", file_output),
 
