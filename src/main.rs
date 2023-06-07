@@ -8,7 +8,7 @@ use python_ast::{parse, PythonContext, CodeGen};
 use rust_format::{Formatter, RustFmt};
 
 // Set up the fern logging facility.
-fn setup_logger() -> Result<(), fern::InitError> {
+fn setup_logger(level: log::LevelFilter) -> Result<(), fern::InitError> {
     fern::Dispatch::new()
         .format(|out, message, record| {
             out.finish(format_args!(
@@ -19,7 +19,7 @@ fn setup_logger() -> Result<(), fern::InitError> {
                 message
             ))
         })
-        .level(log::LevelFilter::Debug)
+        .level(level)
         .chain(std::io::stdout())
         .chain(fern::log_file("output.log")?)
         .apply()?;
@@ -39,11 +39,15 @@ struct Args {
 
     #[clap(long, short, action, help="Don't actually compile, just output the ast.")]
     ast_only: bool,
+
+    #[clap(long, short, action, help="Sets the log level. Values are: off,error,warn,info,debug,trace", default_value_t=log::LevelFilter::Warn)]
+    log_level: log::LevelFilter,
+
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    setup_logger()?;
     let args = Args::parse();
+    setup_logger(args.log_level)?;
     let mut ctx = PythonContext::default();
 
     let mut output_list = Vec::new();
