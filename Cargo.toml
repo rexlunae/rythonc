@@ -8,7 +8,7 @@ edition = "2021"
 [dependencies]
 clap = { version = "4.4", features = ["derive", "cargo"] }
 wild = "2"
-python-ast = { path = "../python-ast-rs", version = "0.1" }
+python-ast = { path = "../python-ast-rs", version = "0.1.1" }
 rust-format = "0.3"
 fern = "0.6"
 log = "0.4"

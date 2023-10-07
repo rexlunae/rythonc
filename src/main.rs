@@ -4,7 +4,7 @@ use std::io::prelude::*;
 use std::time::SystemTime;
 
 use clap::Parser;
-use python_ast::{parse, PythonContext, CodeGen};
+use python_ast::{parse, PythonOptions, CodeGen, CodeGenContext};
 use rust_format::{Formatter, RustFmt};
 
 // Set up the fern logging facility.
@@ -55,7 +55,7 @@ struct Args {
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = Args::parse();
     setup_logger(args.log_level, args.log_file)?;
-    let mut ctx = PythonContext::default();
+    let options = PythonOptions::default();
 
     let mut output_list = Vec::new();
 
@@ -70,7 +70,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 format!("{:?}", ast)
             }
         } else {
-            let rust = ast.to_rust(&mut ctx)?;
+            let rust = ast.to_rust(CodeGenContext::Module, options.clone())?;
             if args.pretty {
                 let unformated = rust.to_string();
                 RustFmt::default().format_str(unformated)?
