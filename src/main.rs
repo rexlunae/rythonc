@@ -12,10 +12,11 @@ fn setup_logger(level: log::LevelFilter, log_file: Option<String>) -> Result<(),
     let mut logger = fern::Dispatch::new()
         .format(|out, message, record| {
             out.finish(format_args!(
-                "[{} {} {}] {}",
+                "[{} {} {}:{}] {}",
                 humantime::format_rfc3339_seconds(SystemTime::now()),
                 record.level(),
                 record.target(),
+                record.line().unwrap(),
                 message
             ))
         })
