@@ -36,7 +36,7 @@ Options:
 
 ## See Also
 
-* The [python-mod](https://crates.io/crates/python-mod) crate. A way to wrote modules in Rython/Python that will be compiled to Rust.
+* The [python-mod](https://crates.io/crates/python-mod) crate. A way to write modules in Rython/Python that will be compiled to Rust.
 * The [python-ast](https://crates.io/crates/python-ast) crate. The base library for working with Python ASTs in Rust.
 
 ## Notes
