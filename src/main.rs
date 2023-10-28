@@ -51,12 +51,18 @@ struct Args {
     #[clap(long, action, help="Write log events to this file.")]
     log_file: Option<String>,
 
+    #[clap(long, short, action, help="Compile without stdpython.")]
+    nostd: bool,
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = Args::parse();
     setup_logger(args.log_level, args.log_file)?;
-    let options = PythonOptions::default();
+    let mut options = PythonOptions::default();
+
+    if args.nostd {
+        options.with_std_python = false;
+    }
 
     let mut output_list = Vec::new();
 
