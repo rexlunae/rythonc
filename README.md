@@ -33,3 +33,12 @@ Options:
   -h, --help                   Print help
   -V, --version                Print version
   ```
+
+## See Also
+
+* The [python-mod](https://crates.io/crates/python-mod) crate. A way to wrote modules in Rython/Python that will be compiled to Rust.
+* The [python-ast](https://crates.io/crates/python-ast) crate. The base library for working with Python ASTs in Rust.
+
+## Notes
+
+Under the hood, rythonc is based on the language defined by the python-ast crate. It will become more capable as the capabilities of the underlying crate improve. At this point, it is mostly a proof of concept, missing many key features.
