@@ -16,4 +16,5 @@ rust-format = "0.3"
 fern = "0.6"
 log = "0.4"
 humantime = "2.1.0"
-python-ast = "0.1.6"
+#python-ast = "0.1"
+python-ast = {path = "../python-ast-rs", version = "0.1.7"}

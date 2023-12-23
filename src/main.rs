@@ -4,7 +4,7 @@ use std::io::prelude::*;
 use std::time::SystemTime;
 
 use clap::Parser;
-use python_ast::{parse, PythonOptions, CodeGen, CodeGenContext};
+use python_ast::{parse, PythonOptions, CodeGen, CodeGenContext, symbols::SymbolTableScopes};
 use rust_format::{Formatter, RustFmt};
 
 // Set up the fern logging facility.
@@ -45,6 +45,9 @@ struct Args {
     #[clap(long, short, action, help="Don't actually compile, just output the ast.")]
     ast_only: bool,
 
+    #[clap(long, short, action, help="Don't actually compile, just output the symbols.")]
+    symbols_only: bool,
+
     #[clap(long, short, action, help="Sets the log level. Values are: off,error,warn,info,debug,trace", default_value_t=log::LevelFilter::Warn)]
     log_level: log::LevelFilter,
 
@@ -77,12 +80,21 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 format!("{:?}", ast)
             }
         } else {
-            let rust = ast.to_rust(CodeGenContext::Module, options.clone())?;
-            if args.pretty {
-                let unformated = rust.to_string();
-                RustFmt::default().format_str(unformated)?
+            let symbols = ast.clone().find_symbols(SymbolTableScopes::new());
+            if args.symbols_only {
+                if args.pretty {
+                    format!("{:#?}", symbols)
+                } else {
+                    format!("{:?}", symbols)
+                }
             } else {
-                format!("{}", rust)
+                let rust = ast.to_rust(CodeGenContext::Module, options.clone(), symbols.clone())?;
+                if args.pretty {
+                    let unformated = rust.to_string();
+                    RustFmt::default().format_str(unformated)?
+                } else {
+                    format!("{}", rust)
+                }
             }
         };
         output_list.push(output);
