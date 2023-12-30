@@ -42,7 +42,7 @@ struct Args {
     #[clap(long, short, action, help="Nicely format the output.")]
     pretty: bool,
 
-    #[clap(long, short, action, help="Don't actually compile, just output the ast.")]
+    #[clap(long, short, action, help="Don't actually compile, just output the ast represented as a Rust data structure.")]
     ast_only: bool,
 
     #[clap(long, short, action, help="Don't actually compile, just output the symbols.")]
@@ -63,9 +63,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     setup_logger(args.log_level, args.log_file)?;
     let mut options = PythonOptions::default();
 
-    if args.nostd {
-        options.with_std_python = false;
-    }
+    options.with_std_python = !args.nostd;
 
     let mut output_list = Vec::new();
 
