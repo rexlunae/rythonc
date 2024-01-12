@@ -7,8 +7,10 @@ use clap::Parser;
 use python_ast::{parse, PythonOptions, CodeGen, CodeGenContext, symbols::SymbolTableScopes};
 use rust_format::{Formatter, RustFmt};
 
+use anyhow::{Result};
+
 // Set up the fern logging facility.
-fn setup_logger(level: log::LevelFilter, log_file: Option<String>) -> Result<(), fern::InitError> {
+fn setup_logger(level: log::LevelFilter, log_file: Option<String>) -> std::result::Result<(), fern::InitError> {
     let mut logger = fern::Dispatch::new()
         .format(|out, message, record| {
             out.finish(format_args!(
@@ -58,7 +60,7 @@ struct Args {
     nostd: bool,
 }
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
+fn main() -> Result<()> {
     let args = Args::parse();
     setup_logger(args.log_level, args.log_file)?;
     let mut options = PythonOptions::default();
@@ -68,8 +70,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut output_list = Vec::new();
 
     for input in args.inputs {
-        let py = read_to_string(input)?;
-        let ast = parse(&py, "__main__")?;
+        let module_name = format!("{}", input.to_string_lossy());
+        let py = read_to_string(input.clone())?;
+        let ast = parse(&py, format!("{}", module_name).as_str())?;
 
         let output = if args.ast_only {
             if args.pretty {
@@ -86,7 +89,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     format!("{:?}", symbols)
                 }
             } else {
-                let rust = ast.to_rust(CodeGenContext::Module, options.clone(), symbols.clone())?;
+                let rust = ast.to_rust(CodeGenContext::Module(module_name), options.clone(), symbols.clone())
+                    .expect("converting to Rust");
                 if args.pretty {
                     let unformated = rust.to_string();
                     RustFmt::default().format_str(unformated)?
