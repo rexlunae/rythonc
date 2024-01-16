@@ -1,6 +1,6 @@
 [package]
 name = "rythonc"
-version = "0.2.0"
+version = "0.2.1"
 edition = "2021"
 description = "A command-line Python to Rust compiler, at this point, very incomplete."
 license = "Apache-2.0"
@@ -16,5 +16,5 @@ rust-format = "0.3"
 fern = "0.6"
 log = "0.4"
 humantime = "2.1.0"
-python-ast = "0.2.0"
+python-ast = "0.2.1"
 anyhow = { version = "1.0.79", features = ["backtrace"] }
