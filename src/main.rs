@@ -85,7 +85,7 @@ fn main() -> Result<()> {
     for input in args.inputs {
         let module_name = format!("{}", input.to_string_lossy());
         let py = read_to_string(input.clone())?;
-        let ast = parse(&py, format!("{}", module_name).as_str())?;
+        let ast = parse(&py, &module_name)?;
 
         let output = if args.ast_only {
             if args.pretty {
