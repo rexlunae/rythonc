@@ -111,8 +111,8 @@ fn main() -> Result<()> {
                     )
                     .expect("converting to Rust");
                 if args.pretty {
-                    let unformated = rust.to_string();
-                    RustFmt::default().format_str(unformated)?
+                    let unformatted = rust.to_string();
+                    RustFmt::default().format_str(unformatted)?
                 } else {
                     format!("{}", rust)
                 }
