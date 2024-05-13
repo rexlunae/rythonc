@@ -76,9 +76,10 @@ struct Args {
 fn main() -> Result<()> {
     let args = Args::parse();
     setup_logger(args.log_level, args.log_file)?;
-    let mut options = PythonOptions::default();
-
-    options.with_std_python = !args.nostd;
+    let options = PythonOptions {
+        with_std_python: !args.nostd,
+        ..Default::default()
+    };
 
     let mut output_list = Vec::new();
 
